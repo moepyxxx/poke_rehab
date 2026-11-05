@@ -14,7 +14,7 @@ const setup = () => {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const field = new Field(canvas, ctx);
+  const field = new Field(canvas, ctx, 0, 0);
   field.draw();
 };
 
