@@ -18,7 +18,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 </section>
 
 <section class="main">
-  <canvas id="screen" class="screen"></canvas>
+  <canvas id="screen" class="screen" width="300" height="300"></canvas>
 </section>
 
  

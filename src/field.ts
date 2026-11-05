@@ -1,4 +1,5 @@
-const FIELD_TILE_SIZE_PER_CANVAS = 10;
+const FIELD_TILE_SIZE_PER_CANVAS = 5;
+import GrassImage from "./assets/grass.svg";
 
 export class Field {
   ctx: CanvasRenderingContext2D;
@@ -17,7 +18,7 @@ export class Field {
     for (let xi = 0; xi < FIELD_TILE_SIZE_PER_CANVAS; xi++) {
       for (let yi = 0; yi < FIELD_TILE_SIZE_PER_CANVAS; yi++) {
         objects.push(
-          new Grass(
+          new ItemGrass(
             this.canvas,
             this.ctx,
             xi * (this.canvas.width / FIELD_TILE_SIZE_PER_CANVAS),
@@ -30,14 +31,9 @@ export class Field {
   }
 
   draw() {
-    this.ctx.fillStyle = "rgba(145,153,125, 1)";
-    this.ctx.fillRect(10, 10, 10, 10);
+    this.objects.forEach((obj) => obj.draw());
   }
 }
-
-// const canvas: HTMLCanvasElement | null = document.getElementById("canvas");
-// if (!canvas) return;
-// const ctx = canvas.getContext("2d");
 
 abstract class FieldObject {
   ctx: CanvasRenderingContext2D;
@@ -46,6 +42,7 @@ abstract class FieldObject {
   height: number;
   x: number;
   y: number;
+  src: string;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -59,12 +56,25 @@ abstract class FieldObject {
     this.height = this.canvas.height / FIELD_TILE_SIZE_PER_CANVAS;
     this.x = x;
     this.y = y;
+    this.src = GrassImage;
   }
 
-  abstract draw(): void;
+  draw() {
+    const img = new Image();
+    img.src = this.src;
+    img.onload = () => {
+      this.ctx.drawImage(
+        img,
+        this.x,
+        this.y,
+        this.canvas.width / FIELD_TILE_SIZE_PER_CANVAS,
+        this.canvas.height / FIELD_TILE_SIZE_PER_CANVAS,
+      );
+    };
+  }
 }
 
-class Grass extends FieldObject {
+class ItemGrass extends FieldObject {
   constructor(
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
@@ -73,5 +83,4 @@ class Grass extends FieldObject {
   ) {
     super(canvas, ctx, x, y);
   }
-  draw() {}
 }
