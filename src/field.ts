@@ -1,3 +1,5 @@
+import type { ControllerEvent } from "./controller";
+
 const ALL_FIELD_TILE_SIZE_PER_CANVAS = 9;
 const VISIBLE_FIELD_TILE_SIZE_PER_CANVAS = 5;
 
@@ -5,8 +7,8 @@ export class Field {
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
   objects: FieldObject[];
-  x: number;
-  y: number;
+  xPoint: number;
+  yPoint: number;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -18,13 +20,63 @@ export class Field {
     this.ctx = ctx;
 
     this.objects = this.createObjects();
-    this.x =
-      startXPoint * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-    this.y =
-      startYPoint * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
+    this.xPoint = startXPoint;
+    this.yPoint = startYPoint;
   }
 
-  createObjects() {
+  checkFieldEvent(event: ControllerEvent) {
+    console.log(event);
+    if (event.mode === "talk") return;
+
+    switch (event.command) {
+      case "above":
+        if (this.yPoint === 0) return;
+        this.yPoint -= 1;
+        return;
+      case "below":
+        if (
+          this.yPoint ===
+          ALL_FIELD_TILE_SIZE_PER_CANVAS - VISIBLE_FIELD_TILE_SIZE_PER_CANVAS
+        )
+          return;
+        this.yPoint += 1;
+        return;
+      case "left":
+        if (this.xPoint === 0) return;
+        this.xPoint -= 1;
+        return;
+      case "right":
+        if (
+          this.xPoint ===
+          ALL_FIELD_TILE_SIZE_PER_CANVAS - VISIBLE_FIELD_TILE_SIZE_PER_CANVAS
+        )
+          return;
+        this.xPoint += 1;
+        return;
+    }
+  }
+
+  draw() {
+    for (let xi = 0; xi < VISIBLE_FIELD_TILE_SIZE_PER_CANVAS; xi++) {
+      for (let yi = 0; yi < VISIBLE_FIELD_TILE_SIZE_PER_CANVAS; yi++) {
+        const targetX =
+          this.calculateXPosition(this.xPoint) + this.calculateXPosition(xi);
+        const targetY =
+          this.calculateYPosition(this.yPoint) + this.calculateYPosition(yi);
+
+        this.objects
+          .filter((obj) => obj.x === targetX && obj.y === targetY)
+          .forEach((obj) =>
+            obj.draw(
+              this.calculateXPosition(this.xPoint),
+              this.calculateYPosition(this.yPoint),
+            ),
+          );
+      }
+    }
+  }
+
+  private createObjects() {
     const objects: FieldObject[] = [];
     for (let xi = 0; xi < ALL_FIELD_TILE_SIZE_PER_CANVAS; xi++) {
       for (let yi = 0; yi < ALL_FIELD_TILE_SIZE_PER_CANVAS; yi++) {
@@ -48,16 +100,16 @@ export class Field {
           new BaseGrass(
             this.canvas,
             this.ctx,
-            xi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
-            yi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
+            this.calculateXPosition(xi),
+            this.calculateYPosition(yi),
           ),
         );
         objects.push(
           new ItemGrass(
             this.canvas,
             this.ctx,
-            xi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
-            yi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
+            this.calculateXPosition(xi),
+            this.calculateYPosition(yi),
           ),
         );
       }
@@ -65,28 +117,14 @@ export class Field {
     return objects;
   }
 
-  changePosition(xPosition: number, yPosition: number) {
-    this.x =
-      xPosition * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-    this.y =
-      yPosition * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
+  private calculateXPosition(xPosition: number) {
+    return xPosition * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
   }
 
-  draw() {
-    for (let xi = 0; xi < VISIBLE_FIELD_TILE_SIZE_PER_CANVAS; xi++) {
-      for (let yi = 0; yi < VISIBLE_FIELD_TILE_SIZE_PER_CANVAS; yi++) {
-        const targetX =
-          this.x +
-          xi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-        const targetY =
-          this.y +
-          yi * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-
-        this.objects
-          .filter((obj) => obj.x === targetX && obj.y === targetY)
-          .forEach((obj) => obj.draw(this.x, this.y));
-      }
-    }
+  private calculateYPosition(yPosition: number) {
+    return (
+      yPosition * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS)
+    );
   }
 }
 
