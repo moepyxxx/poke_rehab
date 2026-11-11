@@ -11,15 +11,17 @@ export class Field {
   constructor(
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
-    startX: number,
-    startY: number,
+    startXPoint: number,
+    startYPoint: number,
   ) {
     this.canvas = canvas;
     this.ctx = ctx;
 
     this.objects = this.createObjects();
-    this.startX = startX;
-    this.startY = startY;
+    this.startX =
+      startXPoint * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
+    this.startY =
+      startYPoint * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
   }
 
   createObjects() {
@@ -37,7 +39,7 @@ export class Field {
               this.canvas,
               this.ctx,
               xi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
-              yi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
+              yi * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS),
             ),
           );
           continue;
