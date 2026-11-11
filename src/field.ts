@@ -5,8 +5,8 @@ export class Field {
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
   objects: FieldObject[];
-  startX: number;
-  startY: number;
+  x: number;
+  y: number;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -18,9 +18,9 @@ export class Field {
     this.ctx = ctx;
 
     this.objects = this.createObjects();
-    this.startX =
+    this.x =
       startXPoint * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-    this.startY =
+    this.y =
       startYPoint * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
   }
 
@@ -65,19 +65,26 @@ export class Field {
     return objects;
   }
 
+  changePosition(xPosition: number, yPosition: number) {
+    this.x =
+      xPosition * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
+    this.y =
+      yPosition * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
+  }
+
   draw() {
     for (let xi = 0; xi < VISIBLE_FIELD_TILE_SIZE_PER_CANVAS; xi++) {
       for (let yi = 0; yi < VISIBLE_FIELD_TILE_SIZE_PER_CANVAS; yi++) {
         const targetX =
-          this.startX +
+          this.x +
           xi * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
         const targetY =
-          this.startY +
+          this.y +
           yi * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
 
         this.objects
           .filter((obj) => obj.x === targetX && obj.y === targetY)
-          .forEach((obj) => obj.draw(this.startX, this.startY));
+          .forEach((obj) => obj.draw(this.x, this.y));
       }
     }
   }
