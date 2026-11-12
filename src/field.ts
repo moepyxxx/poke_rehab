@@ -26,7 +26,9 @@ export class Field {
       case "below":
         if (
           this.yPoint ===
-          ALL_FIELD_TILE_SIZE_PER_CANVAS - VISIBLE_FIELD_TILE_SIZE_PER_CANVAS
+          ALL_FIELD_TILE_SIZE_PER_CANVAS -
+            VISIBLE_FIELD_TILE_SIZE_PER_CANVAS +
+            1
         )
           return;
         this.yPoint += 1;
@@ -38,7 +40,9 @@ export class Field {
       case "right":
         if (
           this.xPoint ===
-          ALL_FIELD_TILE_SIZE_PER_CANVAS - VISIBLE_FIELD_TILE_SIZE_PER_CANVAS
+          ALL_FIELD_TILE_SIZE_PER_CANVAS -
+            VISIBLE_FIELD_TILE_SIZE_PER_CANVAS +
+            1
         )
           return;
         this.xPoint += 1;
@@ -53,6 +57,8 @@ export class Field {
         if (
           xi === 0 ||
           yi === 0 ||
+          xi === 1 ||
+          yi === 1 ||
           xi === ALL_FIELD_TILE_SIZE_PER_CANVAS - 1 ||
           yi === ALL_FIELD_TILE_SIZE_PER_CANVAS - 1
         ) {

@@ -22,7 +22,7 @@ const setup = () => {
   const renderer = new Renderer(canvas, ctx);
   const controller = new Controller();
 
-  const field = new Field(0, 2);
+  const field = new Field(0, 0);
   const hero = new Hero(
     "./src/assets/human/hero/above.svg",
     "./src/assets/human/hero/below.svg",
@@ -37,9 +37,13 @@ const setup = () => {
     const elapsed = timestamp - startTime;
     if (elapsed >= INTERVAL) {
       if (controller.controllerEvent) {
-        field.checkFieldEvent(controller.controllerEvent);
+        if (hero.checkHeroEvent(controller.controllerEvent)) {
+          controller.markEventAsDone();
+        } else {
+          field.checkFieldEvent(controller.controllerEvent);
+        }
       }
-      controller.markEventAsDone();
+
       renderer.drawField(field);
       renderer.drawHero(hero);
       startTime = timestamp;
