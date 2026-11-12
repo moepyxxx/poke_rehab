@@ -1,0 +1,2 @@
+export const ALL_FIELD_TILE_SIZE_PER_CANVAS = 9;
+export const VISIBLE_FIELD_TILE_SIZE_PER_CANVAS = 5;

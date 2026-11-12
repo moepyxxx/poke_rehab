@@ -1,6 +1,8 @@
 import "./style.css";
 import { Field } from "./field.ts";
 import { Controller } from "./controller.ts";
+import { Renderer } from "./renderer.ts";
+import { Hero } from "./human.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 <section class="main">
@@ -17,8 +19,17 @@ const setup = () => {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const field = new Field(canvas, ctx, 0, 2);
+  const renderer = new Renderer(canvas, ctx);
   const controller = new Controller();
+
+  const field = new Field(0, 2);
+  const hero = new Hero(
+    "./src/assets/human/hero/above.svg",
+    "./src/assets/human/hero/below.svg",
+    "./src/assets/human/hero/left.svg",
+    "./src/assets/human/hero/right.svg",
+    "below",
+  );
 
   let startTime: number | null = null;
   const loop = (timestamp: number) => {
@@ -27,9 +38,10 @@ const setup = () => {
     if (elapsed >= INTERVAL) {
       if (controller.controllerEvent) {
         field.checkFieldEvent(controller.controllerEvent);
-        controller.markEventAsDone();
       }
-      field.draw();
+      controller.markEventAsDone();
+      renderer.drawField(field);
+      renderer.drawHero(hero);
       startTime = timestamp;
     }
     requestAnimationFrame(loop);
