@@ -39,7 +39,7 @@ export class Renderer {
     }
 
     if (field.change === null) {
-      this.drawStaticField(field, visibleObjects);
+      this.drawFieldObjects(field, visibleObjects);
 
       field.markChangeAsDone();
       this.animationStartTime = null;
@@ -61,11 +61,26 @@ export class Renderer {
     const progress = elapsed / this.animationSpeed / 100;
 
     if (progress > 1) {
-      this.animationStartTime = null;
-      field.markChangeAsDone();
-      this.drawStaticField(field, visibleObjects);
+      this.drawFieldWithoutAnimation(field, visibleObjects);
       return;
     }
+
+    this.drawFieldWithAnimation(field, visibleObjects, progress);
+  }
+
+  private drawFieldWithoutAnimation(field: Field, fieldObjects: FieldObject[]) {
+    this.animationStartTime = null;
+    field.markChangeAsDone();
+    this.ctx.save();
+    this.drawFieldObjects(field, fieldObjects);
+    this.ctx.restore();
+  }
+
+  private drawFieldWithAnimation(
+    field: Field,
+    fieldObjects: FieldObject[],
+    progress: number,
+  ) {
     const added = [];
     for (
       let yi = field.yPoint;
@@ -79,32 +94,18 @@ export class Renderer {
       );
     }
 
-    visibleObjects.push(...added);
+    const objects = [...fieldObjects, ...added];
 
     this.ctx.save();
     this.ctx.translate(
       (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS) * (1 - progress),
       0,
     );
-    visibleObjects.forEach((obj) => {
-      const x =
-        obj.xPoint * (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-      const y =
-        obj.yPoint * (this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS);
-
-      this.ctx.drawImage(
-        obj.image,
-        x - this.calculateXPosition(field.xPoint),
-        y - this.calculateYPosition(field.yPoint),
-        this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS,
-        this.canvas.height / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS,
-      );
-    });
-
+    this.drawFieldObjects(field, objects);
     this.ctx.restore();
   }
 
-  private drawStaticField(field: Field, objects: FieldObject[]) {
+  private drawFieldObjects(field: Field, objects: FieldObject[]) {
     objects.forEach((obj) => {
       this.drawFieldObject(
         obj,
