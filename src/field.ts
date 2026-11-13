@@ -3,24 +3,29 @@ import {
   VISIBLE_FIELD_TILE_SIZE_PER_CANVAS,
 } from "./constants/field_tile";
 import type { ControllerEvent } from "./controller";
+import type { Direction } from "./types/direction";
 
 export class Field {
   objects: FieldObject[];
   xPoint: number;
   yPoint: number;
+  change: Direction | null;
 
   constructor(startXPoint: number, startYPoint: number) {
     this.objects = this.createObjects();
     this.xPoint = startXPoint;
     this.yPoint = startYPoint;
+    this.change = null;
   }
 
   checkFieldEvent(event: ControllerEvent) {
     if (event.mode === "talk") return;
+    if (this.change !== null) return;
 
     switch (event.command) {
       case "above":
         if (this.yPoint === 0) return;
+        this.change = "above";
         this.yPoint -= 1;
         return;
       case "below":
@@ -31,10 +36,12 @@ export class Field {
             1
         )
           return;
+        this.change = "below";
         this.yPoint += 1;
         return;
       case "left":
         if (this.xPoint === 0) return;
+        this.change = "left";
         this.xPoint -= 1;
         return;
       case "right":
@@ -45,9 +52,14 @@ export class Field {
             1
         )
           return;
+        this.change = "right";
         this.xPoint += 1;
         return;
     }
+  }
+
+  markChangeAsDone() {
+    this.change = null;
   }
 
   private createObjects() {
@@ -76,12 +88,13 @@ export class Field {
 export abstract class FieldObject {
   xPoint: number;
   yPoint: number;
-  src: string;
+  image: HTMLImageElement;
 
   constructor(xPoint: number, yPoint: number, src: string) {
     this.xPoint = xPoint;
     this.yPoint = yPoint;
-    this.src = src;
+    this.image = new Image();
+    this.image.src = src;
   }
 }
 

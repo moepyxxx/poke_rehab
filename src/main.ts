@@ -35,22 +35,25 @@ const setup = () => {
   const loop = (timestamp: number) => {
     if (!startTime) startTime = timestamp;
     const elapsed = timestamp - startTime;
+
     if (elapsed >= INTERVAL) {
       if (controller.controllerEvent) {
         if (hero.checkHeroEvent(controller.controllerEvent)) {
           controller.markEventAsDone();
         } else {
           field.checkFieldEvent(controller.controllerEvent);
+          controller.markEventAsDone();
         }
       }
-
-      renderer.drawField(field);
+      renderer.init();
+      renderer.drawField(field, timestamp);
       renderer.drawHero(hero);
       startTime = timestamp;
     }
     requestAnimationFrame(loop);
   };
-  requestAnimationFrame(loop);
+  // 画像ロードを待つため
+  setTimeout(() => requestAnimationFrame(loop), 1000);
 };
 
 setup();

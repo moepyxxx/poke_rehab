@@ -1,12 +1,10 @@
 import type { ControllerEvent } from "./controller";
-
-type Direction = "above" | "below" | "left" | "right";
-
+import type { Direction } from "./types/direction";
 abstract class Person {
-  aboveSrc: string;
-  belowSrc: string;
-  leftSrc: string;
-  rightSrc: string;
+  aboveImage: HTMLImageElement;
+  belowImage: HTMLImageElement;
+  leftImage: HTMLImageElement;
+  rightImage: HTMLImageElement;
   direction: Direction;
 
   constructor(
@@ -16,10 +14,15 @@ abstract class Person {
     rightSrc: string,
     initialDirection: Direction,
   ) {
-    this.aboveSrc = aboveSrc;
-    this.belowSrc = belowSrc;
-    this.leftSrc = leftSrc;
-    this.rightSrc = rightSrc;
+    this.aboveImage = new Image();
+    this.aboveImage.src = aboveSrc;
+    this.belowImage = new Image();
+    this.belowImage.src = belowSrc;
+    this.leftImage = new Image();
+    this.leftImage.src = leftSrc;
+    this.rightImage = new Image();
+    this.rightImage.src = rightSrc;
+
     this.direction = initialDirection;
   }
 }
