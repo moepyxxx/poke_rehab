@@ -12,7 +12,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
  
 `;
 
-const INTERVAL = 500;
+const INTERVAL = 50;
 
 const setup = () => {
   const canvas = document.querySelector<HTMLCanvasElement>("#screen");

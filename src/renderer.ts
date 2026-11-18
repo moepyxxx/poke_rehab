@@ -6,7 +6,7 @@ export class Renderer {
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
 
-  animationSpeed: number = 50;
+  animationSpeed: number = 5;
   animationStartTime: number | null = null;
 
   constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
