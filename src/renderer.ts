@@ -82,25 +82,56 @@ export class Renderer {
     progress: number,
   ) {
     const added = [];
-    for (
-      let yi = field.yPoint;
-      yi < field.yPoint + VISIBLE_FIELD_TILE_SIZE_PER_CANVAS;
-      yi++
-    ) {
-      added.push(
-        ...field.objects.filter(
-          (obj) => obj.xPoint === field.xPoint - 1 && obj.yPoint === yi,
-        ),
-      );
+    const translate: [number, number] = [0, 0];
+    switch (field.change) {
+      case "right":
+        for (
+          let yi = field.yPoint;
+          yi < field.yPoint + VISIBLE_FIELD_TILE_SIZE_PER_CANVAS;
+          yi++
+        ) {
+          added.push(
+            ...field.objects.filter(
+              (obj) => obj.xPoint === field.xPoint - 1 && obj.yPoint === yi,
+            ),
+          );
+          translate[0] =
+            (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS) *
+            (1 - progress);
+        }
+        break;
+      case "left":
+        for (
+          let yi = field.yPoint;
+          yi < field.yPoint + VISIBLE_FIELD_TILE_SIZE_PER_CANVAS;
+          yi++
+        ) {
+          added.push(
+            ...field.objects.filter(
+              (obj) =>
+                obj.xPoint ===
+                  field.xPoint + VISIBLE_FIELD_TILE_SIZE_PER_CANVAS &&
+                obj.yPoint === yi,
+            ),
+          );
+          translate[0] = -(
+            (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS) *
+            (1 - progress)
+          );
+        }
+        break;
+      case "below":
+        // TODO: impl
+        break;
+      case "above":
+        // TODO: impl
+        break;
     }
 
     const objects = [...fieldObjects, ...added];
 
     this.ctx.save();
-    this.ctx.translate(
-      (this.canvas.width / VISIBLE_FIELD_TILE_SIZE_PER_CANVAS) * (1 - progress),
-      0,
-    );
+    this.ctx.translate(...translate);
     this.drawFieldObjects(field, objects);
     this.ctx.restore();
   }
